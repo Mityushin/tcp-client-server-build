@@ -7,7 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private Controller controller = Controller.getInstance();
+    private Controller controller;
+
+    public Server() {
+        controller = Controller.getInstance();
+    }
 
     public static void main(String[] args) {
         try {
