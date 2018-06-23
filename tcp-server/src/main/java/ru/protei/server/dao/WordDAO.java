@@ -22,10 +22,10 @@ public class WordDAO {
     public List<Word> findAll(String mask) {
         return null;
     }
-    public Word save(Word w) {
+    public Word create(Word w) {
         return null;
     }
-    public Word modify(Word w) {
+    public Word update(Word w) {
         return null;
     }
     public boolean delete(Word w) {
