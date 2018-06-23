@@ -1,11 +1,8 @@
 package ru.protei.server.service;
 
-import ru.protei.common.Command;
-import ru.protei.common.ServerResponse;
 import ru.protei.server.dao.WordDAO;
 import ru.protei.server.model.Word;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WordService {
@@ -23,51 +20,22 @@ public class WordService {
         return instance;
     }
 
-    public ServerResponse resolveCommand(Command command) {
-        Word word;
-        List<Word> list = new ArrayList<Word>();
-        switch (command.getCode()) {
-            case 1: {
-                word = wordDAO.find(command.getWord());
-                if (word != null) {
-                    list.add(word);
-                } else {
-                    return new ServerResponse(1, null, null);
-                }
-                break;
-            }
-            case 2: {
-                //TODO: fix regexp
-                list = wordDAO.findAll(command.getWord());
-                break;
-            }
-            case 3: {
-                word = wordDAO.save(
-                        new Word(null, command.getWord(), command.getDescription()));
-                if (word == null) {
-                    return new ServerResponse(1, null, null);
-                }
-                break;
-            }
-            case 4: {
-                word = wordDAO.modify(
-                        new Word(null, command.getWord(), command.getDescription()));
-                if (word == null) {
-                    return new ServerResponse(1, null, null);
-                }
-                break;
-            }
-            case 5: {
-                boolean flag = wordDAO.delete(
-                        new Word(null, command.getWord(), command.getDescription()));
-                if (flag) {
-                    return new ServerResponse(0, null, null);
-                } else {
-                    return new ServerResponse(1, null, null);
-                }
-            }
-        }
-
-        return new ServerResponse(0, Word.class.getName(), list);
+    public Word find(String title) {
+        return wordDAO.find(title);
+    }
+    public List<Word> findAll(String mask) {
+        return wordDAO.findAll(mask);
+    }
+    public Word create(Word w) {
+        return wordDAO.create(w);
+    }
+    public Word update(Word w) {
+        return wordDAO.update(w);
+    }
+    public boolean delete(Word w) {
+        return wordDAO.delete(w);
+    }
+    public boolean exists(Integer id) {
+        return wordDAO.exists(id);
     }
 }
