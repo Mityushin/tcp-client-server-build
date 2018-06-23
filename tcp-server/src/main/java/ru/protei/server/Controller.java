@@ -32,65 +32,55 @@ public class Controller {
         System.out.println("Get\n" + str);
 
         ClientRequest request = GSON.fromJson(str, ClientRequest.class);
-        Command command = GSON.fromJson(str, Command.class);
-
-        ServerResponse response;
+        ServerResponse<Word> response = new ServerResponse<Word>();
+        response.setStatus(1);
 
         Word word;
         List<Word> list = new ArrayList<Word>();
+        int status = 1;
         switch (request.getCode()) {
             case 1: {
-                word = wordService.find(command.getWord());
+                word = wordService.find(request.getWord());
                 if (word != null) {
                     list.add(word);
-                    response = new ServerResponse(1, Word.class.getName(), list);
-                } else {
-                    response = new ServerResponse(1, null, null);
                 }
+                response.setStatus(0);
                 break;
             }
             case 2: {
                 //TODO: fix regexp
-                list = wordService.findAll(command.getWord());
-                response = new ServerResponse(1, Word.class.getName(), list);
+                list = wordService.findAll(request.getWord());
+                response.setStatus(0);
                 break;
             }
             case 3: {
                 word = wordService.create(
-                        new Word(null, command.getWord(), command.getDescription()));
-                if (word == null) {
-                    response = new ServerResponse(1, null, null);
-                } else {
+                        new Word(null, request.getWord(), request.getDescription()));
+                if (word != null) {
                     list.add(word);
-                    response = new ServerResponse<Word>(0, list);
+                    response.setStatus(0);
                 }
                 break;
             }
             case 4: {
                 word = wordService.update(
-                        new Word(null, command.getWord(), command.getDescription()));
-                if (word == null) {
-                    response = new ServerResponse(1, null, null);
-                } else {
+                        new Word(null, request.getWord(), request.getDescription()));
+                if (word != null) {
                     list.add(word);
-                    response = new ServerResponse(0, Word.class.getName(), list);
+                    response.setStatus(0);
                 }
                 break;
             }
             case 5: {
                 boolean flag = wordService.delete(
-                        new Word(null, command.getWord(), command.getDescription()));
+                        new Word(null, request.getWord(), request.getDescription()));
                 if (flag) {
-                    response = new ServerResponse(0, null, null);
-                } else {
-                    response = new ServerResponse(1, null, null);
+                    response.setStatus(0);
                 }
-            }
-            default: {
-                response = new ServerResponse(1, null, null);
+                break;
             }
         }
-        ServerResponse<Word> response1 = new ServerResponse<Word>(1, list);
+        response.setList(list);
 
         return GSON.toJson(response);
     }
