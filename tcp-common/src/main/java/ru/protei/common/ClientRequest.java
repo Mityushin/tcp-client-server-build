@@ -6,6 +6,26 @@ public class ClientRequest {
     private String description;
     private String regexp;
 
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRegexp(String regexp) {
+        this.regexp = regexp;
+    }
+
+    public ClientRequest() {
+
+    }
+
     public ClientRequest(int code, String word, String description, String regexp) {
         this.code = code;
         this.word = word;
