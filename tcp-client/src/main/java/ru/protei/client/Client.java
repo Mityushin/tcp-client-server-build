@@ -46,7 +46,7 @@ public class Client {
         String str;
         String[] words;
 
-        ClientRequest request = new ClientRequest();
+        ClientRequest request;
 
         while (true) {
             str = reader.readLine();
@@ -61,6 +61,7 @@ public class Client {
                 break;
             }
 
+            request = new ClientRequest();
             try {
                 request.setCode(Integer.parseInt(words[0]));
                 switch (request.getCode()) {
