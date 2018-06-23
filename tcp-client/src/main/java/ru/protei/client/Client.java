@@ -2,12 +2,12 @@ package ru.protei.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ru.protei.common.Command;
+import ru.protei.common.ClientRequest;
+import ru.protei.common.ServerResponse;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.security.InvalidParameterException;
 
 public class Client {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -43,9 +43,10 @@ public class Client {
         System.out.println("Connection established, please insert command like");
         System.out.println("<code> <word> <description>");
 
-        String str = null;
-        String[] words = null;
-        Command command;
+        String str;
+        String[] words;
+
+        ClientRequest request;
 
         while (true) {
             str = reader.readLine();
@@ -60,23 +61,57 @@ public class Client {
                 break;
             }
 
+            request = new ClientRequest();
             try {
-                command = new Command(words);
+                request.setCode(Integer.parseInt(words[0]));
+                switch (request.getCode()) {
+                    case 1: {
+                        request.setWord(words[1]);
+                        break;
+                    }
+                    case 2: {
+                        request.setRegexp(words[1]);
+                        break;
+                    }
+                    case 3:
+                    case 4: {
+                        request.setWord(words[1]);
+                        request.setDescription(words[2]);
+                        break;
+                    }
+                    case 5: {
+                        request.setWord(words[1]);
+                        break;
+                    }
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.out.println("Invalid command.\n" +
+                        "Please insert command like:\n" +
+                        "<code> <word> <description>");
+                continue;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid code command.\n" +
+                        "Please insert command like:\n" +
+                        "<code> <word> <description>");
+                continue;
+            }
 
-                str = GSON.toJson(command);
+            str = GSON.toJson(request);
 
-                out.writeUTF(str);
-                out.flush();
+            out.writeUTF(str);
+            out.flush();
 
-                System.out.println("Send " + str + " to server.");
+            System.out.println("Send " + str + " to server.");
 
-                str = in.readUTF();
-                System.out.println("Get '" + str + "' from server.");
+            str = in.readUTF();
+            System.out.println("Get " + str + " from server.");
 
-            } catch (InvalidParameterException e) {
-                System.out.println("Invalid code. Please insert command like");
-                System.out.println("<code> <word> <description>");
-                System.out.println("Use 'help' to help, 'quit' to quit");
+            ServerResponse response = GSON.fromJson(str, ServerResponse.class);
+
+            if (response.getStatus() != 0) {
+                System.out.println("Server returns ERROR.");
+            } else {
+                System.out.println("Server returns OK.");
             }
         }
 
