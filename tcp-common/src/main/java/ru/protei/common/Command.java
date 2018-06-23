@@ -2,6 +2,7 @@ package ru.protei.common;
 
 import java.security.InvalidParameterException;
 
+@Deprecated
 public class Command {
     private int code;
     private String word = null;
