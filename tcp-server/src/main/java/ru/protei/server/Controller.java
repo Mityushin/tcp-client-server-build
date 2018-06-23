@@ -2,6 +2,7 @@ package ru.protei.server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import ru.protei.common.ClientRequest;
 import ru.protei.common.Command;
 import ru.protei.common.ServerResponse;
 import ru.protei.server.model.Word;
@@ -29,13 +30,15 @@ public class Controller {
 
     public String resolveCommand(String str) {
         System.out.println("Get\n" + str);
+
+        ClientRequest request = GSON.fromJson(str, ClientRequest.class);
         Command command = GSON.fromJson(str, Command.class);
 
         ServerResponse response;
 
         Word word;
         List<Word> list = new ArrayList<Word>();
-        switch (command.getCode()) {
+        switch (request.getCode()) {
             case 1: {
                 word = wordService.find(command.getWord());
                 if (word != null) {
@@ -59,7 +62,7 @@ public class Controller {
                     response = new ServerResponse(1, null, null);
                 } else {
                     list.add(word);
-                    response = new ServerResponse(0, Word.class.getName(), list);
+                    response = new ServerResponse<Word>(0, list);
                 }
                 break;
             }
@@ -87,6 +90,7 @@ public class Controller {
                 response = new ServerResponse(1, null, null);
             }
         }
+        ServerResponse<Word> response1 = new ServerResponse<Word>(1, list);
 
         return GSON.toJson(response);
     }
