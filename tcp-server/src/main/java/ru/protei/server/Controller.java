@@ -3,7 +3,6 @@ package ru.protei.server;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import ru.protei.common.ClientRequest;
-import ru.protei.common.Command;
 import ru.protei.common.ServerResponse;
 import ru.protei.server.model.Word;
 import ru.protei.server.service.WordService;
