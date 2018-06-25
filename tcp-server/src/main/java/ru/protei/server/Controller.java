@@ -13,7 +13,7 @@ import java.util.List;
 public class Controller {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static Controller instance = null;
+    private static Controller instance;
     private WordService wordService;
 
     private Controller() {
