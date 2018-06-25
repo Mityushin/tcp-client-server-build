@@ -34,49 +34,53 @@ public class Controller {
         ServerResponse<Word> response = new ServerResponse<Word>();
         response.setStatus(1);
 
-        Word word;
+        Word word = new Word();
         List<Word> list = new ArrayList<Word>();
-        int status = 1;
+
         switch (request.getCode()) {
             case 1: {
-                word = wordService.find(request.getWord());
+                word.setTitle(request.getWord());
+
+                word = wordService.find(word);
                 if (word != null) {
                     list.add(word);
+                    response.setStatus(0);
                 }
-                response.setStatus(0);
                 break;
             }
             case 2: {
-                //TODO: fix regexp
-                list = wordService.findAll(request.getWord());
+                list = wordService.findAll(request.getRegexp());
                 response.setStatus(0);
                 break;
             }
             case 3: {
-                word = wordService.create(
-                        new Word(null, request.getWord(), request.getDescription()));
-                if (word != null) {
-                    list.add(word);
+                word.setTitle(request.getWord());
+                word.setDescription(request.getDescription());
+
+                if (wordService.create(word)) {
                     response.setStatus(0);
                 }
                 break;
             }
             case 4: {
-                word = wordService.update(
-                        new Word(null, request.getWord(), request.getDescription()));
-                if (word != null) {
-                    list.add(word);
+                word.setTitle(request.getWord());
+                word.setDescription(request.getDescription());
+
+                if (wordService.update(word)) {
                     response.setStatus(0);
                 }
                 break;
             }
             case 5: {
-                boolean flag = wordService.delete(
-                        new Word(null, request.getWord(), request.getDescription()));
-                if (flag) {
+                word.setTitle(request.getWord());
+
+                if (wordService.delete(word)) {
                     response.setStatus(0);
                 }
                 break;
+            }
+            default: {
+                response.setStatus(2);
             }
         }
         response.setList(list);
