@@ -20,22 +20,26 @@ public class WordService {
         return instance;
     }
 
-    public Word find(String title) {
-        return wordDAO.find(title);
+    public Word find(Word w) {
+        return wordDAO.find(w);
     }
     public List<Word> findAll(String mask) {
         return wordDAO.findAll(mask);
     }
-    public Word create(Word w) {
+    public boolean create(Word w) {
         return wordDAO.create(w);
     }
-    public Word update(Word w) {
+    public boolean update(Word w) {
         return wordDAO.update(w);
     }
     public boolean delete(Word w) {
-        return wordDAO.delete(w);
+        if (!wordDAO.exists(w)) {
+            return false;
+        }
+        wordDAO.delete(w);
+        return true;
     }
-    public boolean exists(Integer id) {
-        return wordDAO.exists(id);
+    public boolean exists(Word w) {
+        return wordDAO.exists(w);
     }
 }
