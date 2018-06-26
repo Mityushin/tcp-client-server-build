@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBPool {
-//    private static final String JDBC_DRIVER = "";
     private static final String JDBC_DB_URL = "jdbc:h2:mem:";
     private static final String JDBC_USER = "sa";
     private static final String JDBC_PASSWORD = "";

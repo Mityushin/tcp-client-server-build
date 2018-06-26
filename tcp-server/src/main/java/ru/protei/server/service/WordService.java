@@ -6,7 +6,7 @@ import ru.protei.server.model.Word;
 import java.util.List;
 
 public class WordService {
-    private static WordService instance = null;
+    private static WordService instance;
     private WordDAO wordDAO;
 
     private WordService() {

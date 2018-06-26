@@ -24,7 +24,7 @@ public class Server {
 
     public void run() throws IOException{
         int serverPort = 3345;
-        ServerSocket server = null;
+        ServerSocket server;
         server = new ServerSocket(serverPort);
 
         System.out.println("Start server, waiting for client.");

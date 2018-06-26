@@ -21,12 +21,6 @@ public class Word {
 
     }
 
-    public Word(Integer id, String title, String description) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }

@@ -26,13 +26,6 @@ public class ClientRequest {
 
     }
 
-    public ClientRequest(int code, String word, String description, String regexp) {
-        this.code = code;
-        this.word = word;
-        this.description = description;
-        this.regexp = regexp;
-    }
-
     public int getCode() {
         return code;
     }
