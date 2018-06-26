@@ -50,7 +50,7 @@ public class Client {
 
         while (true) {
             str = reader.readLine();
-            words = str.split(" ", 3);
+            words = str.split("\\s", 3);
 
             if (words[0].equalsIgnoreCase("help")) {
                 printHelp();
@@ -108,11 +108,7 @@ public class Client {
 
             ServerResponse response = GSON.fromJson(str, ServerResponse.class);
 
-            if (response.getStatus() != 0) {
-                System.out.println("Server returns ERROR.");
-            } else {
-                System.out.println("Server returns OK.");
-            }
+            System.out.println("Server returns " + response.getStatus());
         }
 
         server.close();

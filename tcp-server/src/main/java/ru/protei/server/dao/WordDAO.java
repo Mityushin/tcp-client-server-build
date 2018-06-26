@@ -19,7 +19,7 @@ public class WordDAO {
             "TITLE VARCHAR(20) NOT NULL UNIQUE, " +
             "DESCRIPTION VARCHAR(40))";
     private static final String SQL_FIND_BY_TITLE = "SELECT * FROM WORD WHERE WORD.TITLE = ?";
-    private static final String SQL_FIND_BY_TITLE_REGEXP = "SELECT * FROM WORD WHERE WORD.TITLE REGEXP ?";
+    private static final String SQL_FIND_BY_TITLE_REGEXP = "SELECT * FROM WORD WHERE WORD.TITLE LIKE ?";
     private static final String SQL_CREATE_WORD = "INSERT INTO WORD (TITLE, DESCRIPTION) VALUES (?, ?)";
     private static final String SQL_UPDATE_WORD = "UPDATE WORD SET WORD.DESCRIPTION = ? WHERE WORD.TITLE = ?";
     private static final String SQL_DELETE_WORD_BY_TITLE = "DELETE FROM WORD WHERE WORD.TITLE = ?";
@@ -76,9 +76,9 @@ public class WordDAO {
 
             while (rs.next()) {
                 Word word = new Word();
-                word.setId(rs.getInt("ID"));
-                word.setTitle(rs.getString("TITLE"));
-                word.setDescription(rs.getString("DESCRIPTION"));
+                word.setId(rs.getInt(SQL_TABLE_COLUMN_ID));
+                word.setTitle(rs.getString(SQL_TABLE_COLUMN_TITLE));
+                word.setDescription(rs.getString(SQL_TABLE_COLUMN_DESCRIPTION));
                 list.add(word);
             }
         } catch (SQLException e) {
