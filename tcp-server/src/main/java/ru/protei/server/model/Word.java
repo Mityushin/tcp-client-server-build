@@ -1,5 +1,7 @@
 package ru.protei.server.model;
 
+import java.util.Objects;
+
 /**
  * Model Word
  * @author Dmitry Mityushin
@@ -65,5 +67,21 @@ public class Word {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Word)) return false;
+        Word word = (Word) o;
+        return Objects.equals(id, word.id) &&
+                Objects.equals(title, word.title) &&
+                Objects.equals(description, word.description);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, title, description);
     }
 }

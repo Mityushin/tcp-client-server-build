@@ -1,6 +1,7 @@
 package ru.protei.common;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -29,5 +30,20 @@ public class ServerResponse<E> {
 
     public void setList(List<E> list) {
         this.list = list;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ServerResponse)) return false;
+        ServerResponse<?> response = (ServerResponse<?>) o;
+        return status == response.status &&
+                Objects.equals(list, response.list);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(status, list);
     }
 }
