@@ -1,4 +1,8 @@
 # Клиент-серверное приложение
+[![Build Status](https://travis-ci.org/Mityushin/tcp-client-server-build.svg?branch=master)](https://travis-ci.org/Mityushin/tcp-client-server-build)
+![license](https://img.shields.io/github/license/mashape/apistatus.svg)
+
+
 За основу взята MVC архитектура.
 Клиент и сервер обмениваются информацией по TCP, используя объекты в формате JSON.
 Использована Java 10 версии.
