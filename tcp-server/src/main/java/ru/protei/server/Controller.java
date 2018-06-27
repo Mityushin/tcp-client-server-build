@@ -11,6 +11,11 @@ import ru.protei.server.service.WordService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The controller is responsible for parsing the commands from tcp connection.
+ * @author Dmitry Mityushin
+ */
+
 public class Controller {
     private static final Logger log = Logger.getLogger(Controller.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

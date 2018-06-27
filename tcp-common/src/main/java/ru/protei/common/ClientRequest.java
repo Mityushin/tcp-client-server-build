@@ -1,5 +1,11 @@
 package ru.protei.common;
 
+
+/**
+ * The ClientRequest is request, which contains command with the necessary fields.
+ * @author Dmitry Mityushin
+ */
+
 public class ClientRequest {
     private int code;
     private String word;

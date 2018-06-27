@@ -6,6 +6,11 @@ import ru.protei.server.model.Word;
 
 import java.util.List;
 
+/**
+ * Service for the model {@code Word}.
+ * @author Dmitry Mityushin
+ */
+
 public class WordService {
     private static final Logger log = Logger.getLogger(WordService.class);
 
@@ -16,6 +21,11 @@ public class WordService {
         wordDAO = WordDAO.getInstance();
     }
 
+    /**
+     * Returns {@code WordService} instance.
+     *
+     * @return {@code WordService} instance
+     */
     public static WordService getInstance() {
 
         if (instance == null) {
@@ -25,6 +35,13 @@ public class WordService {
         return instance;
     }
 
+    /**
+     * Find {@code Word} by {@code Word} title.
+     *
+     * @param w with set title
+     * @return the {@code Word} of the element to be found
+     * @return null if there isn't {@code Word} with specified title
+     */
     public Word find(Word w) {
         return wordDAO.find(w);
     }

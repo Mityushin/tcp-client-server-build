@@ -9,6 +9,11 @@ import java.net.Socket;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+/**
+ * The Server is responsible for tcp connections.
+ * @author Dmitry Mityushin
+ */
+
 public class Server {
     private static final Logger log = Logger.getLogger(Server.class);
 

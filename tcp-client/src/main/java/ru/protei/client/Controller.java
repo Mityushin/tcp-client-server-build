@@ -8,6 +8,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * The Controller is responsible for parsing the commands from {@code System.in}.
+ * @author Dmitry Mityushin
+ */
+
 public class Controller {
     private static Logger log = Logger.getLogger(Controller.class);
     private static String HELP_QUERY = "help()";
@@ -29,6 +34,11 @@ public class Controller {
         return instanse;
     }
 
+    /**
+     * Returns valid request with required parameters.
+     *
+     * @return valid request with required parameters
+     */
     public ClientRequest getClientRequest() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
@@ -93,6 +103,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Displays server response.
+     *
+     * @param response with got data
+     */
     public void resolveServerResponse(ServerResponse response) {
         switch (response.getStatus()) {
             case 0: {
