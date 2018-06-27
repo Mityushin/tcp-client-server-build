@@ -27,7 +27,6 @@ public class Client {
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        Logger.getRootLogger().setLevel(Level.FATAL);
         new Client().run();
     }
 
