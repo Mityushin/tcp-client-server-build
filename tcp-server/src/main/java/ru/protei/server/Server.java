@@ -29,8 +29,7 @@ public class Server {
 
     public void run() throws IOException{
         int serverPort = 3345;
-        ServerSocket server;
-        server = new ServerSocket(serverPort);
+        ServerSocket server = new ServerSocket(serverPort);
         log.info("Start server");
 
         Socket client = server.accept();
