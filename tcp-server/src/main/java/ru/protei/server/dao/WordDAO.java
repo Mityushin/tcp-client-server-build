@@ -1,7 +1,7 @@
 package ru.protei.server.dao;
 
 import org.apache.log4j.Logger;
-import ru.protei.server.database.DBPool;
+import ru.protei.server.database.DBConnectionManager;
 import ru.protei.server.model.Word;
 
 import java.sql.PreparedStatement;
@@ -30,12 +30,12 @@ public class WordDAO {
 
 
     private static WordDAO instance;
-    private DBPool dbPool;
+    private DBConnectionManager dbConnectionManager;
 
     private WordDAO() {
-        dbPool = DBPool.getInstance();
+        dbConnectionManager = DBConnectionManager.getInstance();
         try {
-            Statement stmt = dbPool.getConnection().createStatement();
+            Statement stmt = dbConnectionManager.getConnection().createStatement();
             stmt.executeUpdate(SQL_CREATE_TABLE_WORD);
             log.info("Table WORD created");
         } catch (SQLException e) {
@@ -52,7 +52,7 @@ public class WordDAO {
 
     public Word find(Word w) {
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_FIND_BY_TITLE);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_FIND_BY_TITLE);
 
             pstmt.setString(1, w.getTitle());
 
@@ -73,7 +73,7 @@ public class WordDAO {
     public List<Word> findAll(String mask) {
         List<Word> list = new ArrayList<Word>();
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_FIND_BY_TITLE_REGEXP);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_FIND_BY_TITLE_REGEXP);
             pstmt.setString(1, mask);
             ResultSet rs = pstmt.executeQuery();
 
@@ -91,7 +91,7 @@ public class WordDAO {
     }
     public boolean create(Word w) {
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_CREATE_WORD);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_CREATE_WORD);
             pstmt.setString(1, w.getTitle());
             pstmt.setString(2, w.getDescription());
 
@@ -103,7 +103,7 @@ public class WordDAO {
     }
     public boolean update(Word w) {
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_UPDATE_WORD);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_UPDATE_WORD);
             pstmt.setString(1, w.getDescription());
             pstmt.setString(2, w.getTitle());
 
@@ -115,7 +115,7 @@ public class WordDAO {
     }
     public boolean delete(Word w) {
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_DELETE_WORD_BY_TITLE);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_DELETE_WORD_BY_TITLE);
             pstmt.setString(1, w.getTitle());
 
             return pstmt.executeUpdate() != 0;
@@ -126,7 +126,7 @@ public class WordDAO {
     }
     public boolean exists(Word w) {
         try {
-            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_CHECK_EXISTS_BY_TITLE);
+            PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_CHECK_EXISTS_BY_TITLE);
             pstmt.setString(1, w.getTitle());
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
