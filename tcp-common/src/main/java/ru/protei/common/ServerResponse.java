@@ -2,6 +2,12 @@ package ru.protei.common;
 
 import java.util.List;
 
+
+/**
+ * The ServerResponse is response, which contains server reply.
+ * @author Dmitry Mityushin
+ */
+
 public class ServerResponse<E> {
     private int status;
     private List<E> list;

@@ -6,6 +6,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Connection manager.
+ * @author Dmitry Mityushin
+ */
+
 public class DBConnectionManager {
     private static final Logger log = Logger.getLogger(DBConnectionManager.class);
 
@@ -18,6 +23,11 @@ public class DBConnectionManager {
 
     private DBConnectionManager() {}
 
+    /**
+     * Returns {@code DBConnectionManager} instance.
+     *
+     * @return {@code DBConnectionManager} instance
+     */
     public static DBConnectionManager getInstance() {
         if (instance == null) {
             instance = new DBConnectionManager();
@@ -25,6 +35,11 @@ public class DBConnectionManager {
         return instance;
     }
 
+    /**
+     * Returns database {@code Connection} instance.
+     *
+     * @return database {@code Connection} instance
+     */
     public Connection getConnection() {
         if (connection == null) {
             try {
