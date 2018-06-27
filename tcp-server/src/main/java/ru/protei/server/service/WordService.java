@@ -30,7 +30,23 @@ public class WordService {
     }
 
     public List<Word> findAll(String mask) {
-        return wordDAO.findAll(mask);
+        StringBuilder builder = new StringBuilder();
+        for (char ch : mask.toCharArray()) {
+            switch (ch) {
+                case '*': {
+                    builder.append('%');
+                    break;
+                }
+                case '?': {
+                    builder.append('_');
+                    break;
+                }
+                default: {
+                    builder.append(ch);
+                }
+            }
+        }
+        return wordDAO.findAll(builder.toString());
     }
 
     public boolean create(Word w) {
