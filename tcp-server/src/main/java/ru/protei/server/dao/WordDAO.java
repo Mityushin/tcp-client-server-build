@@ -11,6 +11,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO for the model {@code Word}.
+ * @author Dmitry Mityushin
+ */
+
 public class WordDAO {
     private static final Logger log = Logger.getLogger(WordDAO.class);
 
@@ -43,6 +48,11 @@ public class WordDAO {
         }
     }
 
+    /**
+     * Return {@code WordDAO} instance.
+     *
+     * @return {@code WordDAO} instance
+     */
     public static WordDAO getInstance() {
         if (instance == null) {
             instance = new WordDAO();
@@ -50,6 +60,13 @@ public class WordDAO {
         return instance;
     }
 
+    /**
+     * Find {@code Word} by {@code Word} title.
+     *
+     * @param w the {@code Word} element wich contains title to be found
+     * @return the {@code Word} of the element to be found
+     * @return null if there isn't {@code Word} with specified title
+     */
     public Word find(Word w) {
         try {
             PreparedStatement pstmt = dbConnectionManager.getConnection().prepareStatement(SQL_FIND_BY_TITLE);
@@ -70,6 +87,14 @@ public class WordDAO {
         }
         return null;
     }
+
+    /**
+     * Find {@code Word} by regexp.
+     *
+     * @param mask the regexp for search
+     * @return the {@code List} of {@code Word} of elements to be found
+     * @return null if there isn't {@code Word} with specified title
+     */
     public List<Word> findAll(String mask) {
         List<Word> list = new ArrayList<Word>();
         try {

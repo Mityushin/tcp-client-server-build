@@ -12,6 +12,11 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
+/**
+ * The Client is responsible for create tcp connection with Server.
+ * @author Dmitry Mityushin
+ */
+
 public class Client {
     private static final Logger log = Logger.getLogger(Client.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
