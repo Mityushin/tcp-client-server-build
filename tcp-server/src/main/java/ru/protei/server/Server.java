@@ -6,7 +6,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 public class Server {
+    private static final Logger log = Logger.getLogger(Server.class);
+
     private Controller controller;
 
     public Server() {
@@ -14,41 +19,47 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        try {
-            new Server().run();
-        } catch (IOException e) {
-            System.out.println("Lose connection to client");
-//            e.printStackTrace();
-        }
+        BasicConfigurator.configure();
+        new Server().run();
     }
 
-    public void run() throws IOException{
+    public void run() {
         int serverPort = 3345;
         ServerSocket server = null;
-        server = new ServerSocket(serverPort);
+        try {
+            server = new ServerSocket(serverPort);
+        } catch (IOException e) {
+            log.fatal("Can't create socket", e);
+            System.exit(2);
+        }
+        log.info("Start server");
 
-        System.out.println("Start server, waiting for client.");
-        Socket client = server.accept();
+        while (true) {
+            try {
+                Socket client = server.accept();
+                log.info("Get client");
 
-        DataInputStream in = new DataInputStream(client.getInputStream());
-        DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                DataInputStream in = new DataInputStream(client.getInputStream());
+                DataOutputStream out = new DataOutputStream(client.getOutputStream());
 
-        System.out.println("Get client.");
+                String str;
 
-        String str;
+                while (!client.isClosed()) {
+                    str = in.readUTF();
 
-        while (!client.isClosed()) {
-            str = in.readUTF();
+                    str = controller.resolveCommand(str);
 
-            str = controller.resolveCommand(str);
+                    out.writeUTF(str);
+                    out.flush();
+                }
 
-            out.writeUTF(str);
-            out.flush();
-
-            System.out.println("Send " + str + " to client.");
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                log.error("Lose client");
+            }
         }
 
-        in.close();
-        out.close();
+        //log.info("Stop server");
     }
 }

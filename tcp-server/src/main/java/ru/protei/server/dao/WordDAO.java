@@ -1,5 +1,6 @@
 package ru.protei.server.dao;
 
+import org.apache.log4j.Logger;
 import ru.protei.server.database.DBPool;
 import ru.protei.server.model.Word;
 
@@ -11,6 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordDAO {
+    private static final Logger log = Logger.getLogger(WordDAO.class);
+
+    private static final String SQL_TABLE_COLUMN_ID = "ID";
+    private static final String SQL_TABLE_COLUMN_TITLE = "TITLE";
+    private static final String SQL_TABLE_COLUMN_DESCRIPTION = "DESCRIPTION";
+    private static final String SQL_CREATE_TABLE_WORD = "CREATE TABLE WORD (" +
+            "ID INTEGER NOT NULL AUTO_INCREMENT, " +
+            "TITLE VARCHAR(20) NOT NULL UNIQUE, " +
+            "DESCRIPTION VARCHAR(40))";
+    private static final String SQL_FIND_BY_TITLE = "SELECT * FROM WORD WHERE WORD.TITLE = ?";
+    private static final String SQL_FIND_BY_TITLE_REGEXP = "SELECT * FROM WORD WHERE WORD.TITLE LIKE ?";
+    private static final String SQL_CREATE_WORD = "INSERT INTO WORD (TITLE, DESCRIPTION) VALUES (?, ?)";
+    private static final String SQL_UPDATE_WORD = "UPDATE WORD SET WORD.DESCRIPTION = ? WHERE WORD.TITLE = ?";
+    private static final String SQL_DELETE_WORD_BY_TITLE = "DELETE FROM WORD WHERE WORD.TITLE = ?";
+    private static final String SQL_CHECK_EXISTS_BY_TITLE = "SELECT * FROM WORD WHERE WORD.TITLE = ?";
+
+
     private static WordDAO instance;
     private DBPool dbPool;
 
@@ -18,11 +36,10 @@ public class WordDAO {
         dbPool = DBPool.getInstance();
         try {
             Statement stmt = dbPool.getConnection().createStatement();
-            String sql = "CREATE TABLE WORD (ID INTEGER NOT NULL AUTO_INCREMENT, TITLE VARCHAR(20) NOT NULL, DESCRIPTION VARCHAR(40))";
-            stmt.executeUpdate(sql);
-            System.out.println("Table WORD created.");
+            stmt.executeUpdate(SQL_CREATE_TABLE_WORD);
+            log.info("Table WORD created");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.fatal("Can't create table WORD", e);
         }
     }
 
@@ -33,63 +50,91 @@ public class WordDAO {
         return instance;
     }
 
-    public Word find(String title) {
+    public Word find(Word w) {
         try {
-            Statement stmt = dbPool.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM USER");
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_FIND_BY_TITLE);
+
+            pstmt.setString(1, w.getTitle());
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Word word = new Word();
+                word.setId(rs.getInt(SQL_TABLE_COLUMN_ID));
+                word.setTitle(rs.getString(SQL_TABLE_COLUMN_TITLE));
+                word.setDescription(rs.getString(SQL_TABLE_COLUMN_DESCRIPTION));
+                return word;
+            }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error find", e);
         }
         return null;
     }
     public List<Word> findAll(String mask) {
         List<Word> list = new ArrayList<Word>();
         try {
-            Statement stmt = dbPool.getConnection().createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM WORD");
-            System.out.println(rs.toString());
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_FIND_BY_TITLE_REGEXP);
+            pstmt.setString(1, mask);
+            ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 Word word = new Word();
-                word.setId(rs.getInt("ID"));
-                word.setTitle(rs.getString("TITLE"));
-                word.setDescription(rs.getString("DESCRIPTION"));
+                word.setId(rs.getInt(SQL_TABLE_COLUMN_ID));
+                word.setTitle(rs.getString(SQL_TABLE_COLUMN_TITLE));
+                word.setDescription(rs.getString(SQL_TABLE_COLUMN_DESCRIPTION));
                 list.add(word);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error findAll", e);
         }
         return list;
     }
-    public Word create(Word w) {
+    public boolean create(Word w) {
         try {
-            String sql = "INSERT INTO WORD (TITLE, DESCRIPTION) VALUES (?, ?)";
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_CREATE_WORD);
+            pstmt.setString(1, w.getTitle());
+            pstmt.setString(2, w.getDescription());
 
-            PreparedStatement stmt = dbPool.getConnection().prepareStatement(sql);
-            stmt.setString(1, w.getTitle());
-            stmt.setString(2, w.getDescription());
-
-            int rowsInserted = stmt.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println("New word was inserted successfully!");
-                return w;
-            } else {
-                System.out.println("Error while inserting new word.");
-                return null;
-            }
+            return pstmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error insert", e);
         }
-        return null;
-    }
-    public Word update(Word w) {
-        return null;
-    }
-    public boolean delete(Word w) {
         return false;
     }
-    public boolean exists(Integer id) {
+    public boolean update(Word w) {
+        try {
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_UPDATE_WORD);
+            pstmt.setString(1, w.getDescription());
+            pstmt.setString(2, w.getTitle());
+
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException e) {
+            log.error("Error update", e);
+        }
+        return false;
+    }
+    public boolean delete(Word w) {
+        try {
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_DELETE_WORD_BY_TITLE);
+            pstmt.setString(1, w.getTitle());
+
+            return pstmt.executeUpdate() != 0;
+        } catch (SQLException e) {
+            log.error("Error delete", e);
+        }
+        return false;
+    }
+    public boolean exists(Word w) {
+        try {
+            PreparedStatement pstmt = dbPool.getConnection().prepareStatement(SQL_CHECK_EXISTS_BY_TITLE);
+            pstmt.setString(1, w.getTitle());
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Error exists", e);
+        }
         return false;
     }
 }

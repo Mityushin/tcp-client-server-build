@@ -2,6 +2,9 @@ package ru.protei.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import ru.protei.common.ClientRequest;
 import ru.protei.common.ServerResponse;
 
@@ -10,112 +13,52 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 public class Client {
+    private static final Logger log = Logger.getLogger(Client.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static void printHelp() {
-        System.out.println("This is help. Enjoy.");
+    private static final String SERVER_IP_ADDRESS = "localhost";
+    private static final int SERVER_PORT = 3345;
+
+    private Controller controller;
+
+    public Client() {
+        this.controller = Controller.getInstanse();
     }
 
     public static void main(String[] args) {
-        try {
-            new Client().run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.FATAL);
+        new Client().run();
     }
 
-    public void run() throws IOException {
-        String address = "localhost";
-        int serverPort = 3345;
+    public void run() {
+        try {
+            log.info("Start client");
 
-        InetAddress ipAddress = InetAddress.getByName(address);
-        Socket server;
+            InetAddress ipAddress = InetAddress.getByName(SERVER_IP_ADDRESS);
+            Socket server = new Socket(ipAddress, SERVER_PORT);
+            log.info("Connected to server");
 
-        System.out.println("Start client, trying to connect to server.");
+            DataInputStream in = new DataInputStream(server.getInputStream());
+            DataOutputStream out = new DataOutputStream(server.getOutputStream());
 
-        server = new Socket(ipAddress, serverPort);
+            while (!server.isClosed()) {
+                ClientRequest request = controller.getClientRequest();
 
-        DataInputStream in = new DataInputStream(server.getInputStream());
-        DataOutputStream out = new DataOutputStream(server.getOutputStream());
+                String str = GSON.toJson(request);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                out.writeUTF(str);
+                out.flush();
 
-        System.out.println("Connection established, please insert command like");
-        System.out.println("<code> <word> <description>");
+                str = in.readUTF();
 
-        String str;
-        String[] words;
+                ServerResponse response = GSON.fromJson(str, ServerResponse.class);
 
-        ClientRequest request;
-
-        while (true) {
-            str = reader.readLine();
-            words = str.split(" ", 3);
-
-            if (words[0].equalsIgnoreCase("help")) {
-                printHelp();
-                continue;
+                controller.resolveServerResponse(response);
             }
-
-            if (words[0].equalsIgnoreCase("quit")) {
-                break;
-            }
-
-            request = new ClientRequest();
-            try {
-                request.setCode(Integer.parseInt(words[0]));
-                switch (request.getCode()) {
-                    case 1: {
-                        request.setWord(words[1]);
-                        break;
-                    }
-                    case 2: {
-                        request.setRegexp(words[1]);
-                        break;
-                    }
-                    case 3:
-                    case 4: {
-                        request.setWord(words[1]);
-                        request.setDescription(words[2]);
-                        break;
-                    }
-                    case 5: {
-                        request.setWord(words[1]);
-                        break;
-                    }
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println("Invalid command.\n" +
-                        "Please insert command like:\n" +
-                        "<code> <word> <description>");
-                continue;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid code command.\n" +
-                        "Please insert command like:\n" +
-                        "<code> <word> <description>");
-                continue;
-            }
-
-            str = GSON.toJson(request);
-
-            out.writeUTF(str);
-            out.flush();
-
-            System.out.println("Send " + str + " to server.");
-
-            str = in.readUTF();
-            System.out.println("Get " + str + " from server.");
-
-            ServerResponse response = GSON.fromJson(str, ServerResponse.class);
-
-            if (response.getStatus() != 0) {
-                System.out.println("Server returns ERROR.");
-            } else {
-                System.out.println("Server returns OK.");
-            }
+        } catch (IOException e) {
+            log.fatal("Can't connect to server", e);
+            System.exit(2);
         }
-
-        server.close();
-        System.out.println("Connection close. Quit program.");
     }
 }
