@@ -20,40 +20,46 @@ public class Server {
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
-        try {
-            new Server().run();
-        } catch (IOException e) {
-            log.error("Lose client", e);
-        }
+        new Server().run();
     }
 
-    public void run() throws IOException{
+    public void run() {
         int serverPort = 3345;
-        ServerSocket server = new ServerSocket(serverPort);
+        ServerSocket server = null;
+        try {
+            server = new ServerSocket(serverPort);
+        } catch (IOException e) {
+            log.fatal("Can't create socket", e);
+            System.exit(2);
+        }
         log.info("Start server");
 
-        Socket client = server.accept();
-        log.info("Get client");
+        while (true) {
+            try {
+                Socket client = server.accept();
+                log.info("Get client");
 
-        DataInputStream in = new DataInputStream(client.getInputStream());
-        DataOutputStream out = new DataOutputStream(client.getOutputStream());
+                DataInputStream in = new DataInputStream(client.getInputStream());
+                DataOutputStream out = new DataOutputStream(client.getOutputStream());
 
-        String str;
+                String str;
 
-        while (!client.isClosed()) {
-            str = in.readUTF();
-//            log.info("Get: " + str);
+                while (!client.isClosed()) {
+                    str = in.readUTF();
 
-            str = controller.resolveCommand(str);
+                    str = controller.resolveCommand(str);
 
-            out.writeUTF(str);
-            out.flush();
-//            log.info("Send: " + str);
+                    out.writeUTF(str);
+                    out.flush();
+                }
+
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                log.error("Lose client");
+            }
         }
 
-        in.close();
-        out.close();
-
-        log.info("Stop server");
+        //log.info("Stop server");
     }
 }
