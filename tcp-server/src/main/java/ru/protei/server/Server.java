@@ -6,7 +6,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 public class Server {
+    private static final Logger log = Logger.getLogger(Server.class);
+
     private Controller controller;
 
     public Server() {
@@ -14,11 +19,11 @@ public class Server {
     }
 
     public static void main(String[] args) {
+        BasicConfigurator.configure();
         try {
             new Server().run();
         } catch (IOException e) {
-            System.out.println("Lose connection to client");
-//            e.printStackTrace();
+            log.error("Lose client", e);
         }
     }
 
@@ -26,29 +31,30 @@ public class Server {
         int serverPort = 3345;
         ServerSocket server;
         server = new ServerSocket(serverPort);
+        log.info("Start server");
 
-        System.out.println("Start server, waiting for client.");
         Socket client = server.accept();
+        log.info("Get client");
 
         DataInputStream in = new DataInputStream(client.getInputStream());
         DataOutputStream out = new DataOutputStream(client.getOutputStream());
-
-        System.out.println("Get client.");
 
         String str;
 
         while (!client.isClosed()) {
             str = in.readUTF();
+//            log.info("Get: " + str);
 
             str = controller.resolveCommand(str);
 
             out.writeUTF(str);
             out.flush();
-
-            System.out.println("Send " + str + " to client.");
+//            log.info("Send: " + str);
         }
 
         in.close();
         out.close();
+
+        log.info("Stop server");
     }
 }
