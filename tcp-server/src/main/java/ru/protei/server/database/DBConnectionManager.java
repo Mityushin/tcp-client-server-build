@@ -6,21 +6,21 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBPool {
-    private static final Logger log = Logger.getLogger(DBPool.class);
+public class DBConnectionManager {
+    private static final Logger log = Logger.getLogger(DBConnectionManager.class);
 
     private static final String JDBC_DB_URL = "jdbc:h2:mem:";
     private static final String JDBC_USER = "sa";
     private static final String JDBC_PASSWORD = "";
 
     private Connection connection;
-    private static DBPool instance;
+    private static DBConnectionManager instance;
 
-    private DBPool() {}
+    private DBConnectionManager() {}
 
-    public static DBPool getInstance() {
+    public static DBConnectionManager getInstance() {
         if (instance == null) {
-            instance = new DBPool();
+            instance = new DBConnectionManager();
         }
         return instance;
     }

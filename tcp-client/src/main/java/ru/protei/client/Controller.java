@@ -37,8 +37,7 @@ public class Controller {
 
         ClientRequest request;
 
-        System.out.println();
-        System.out.println(HELP_BODY);
+        log.info(HELP_BODY);
 
         while (true) {
             try {
@@ -47,7 +46,7 @@ public class Controller {
                 words = str.split("\\s", 3);
 
                 while (words[0].equalsIgnoreCase(HELP_QUERY)) {
-                    System.out.println(HELP_BODY);
+                    log.info(HELP_BODY);
 
                     str = reader.readLine();
                     words = str.split("\\s", 3);
@@ -86,12 +85,10 @@ public class Controller {
                     }
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                System.out.println(BAD_COMMAND);
-                log.error(BAD_COMMAND, e);
+                log.error(BAD_COMMAND);
 
             } catch (NumberFormatException e) {
-                System.out.println(BAD_COMMAND);
-                log.error(BAD_COMMAND, e);
+                log.error(BAD_COMMAND);
             }
         }
     }
@@ -100,26 +97,22 @@ public class Controller {
         switch (response.getStatus()) {
             case 0: {
                 log.info("Server return OK");
-                System.out.println("Server return OK");
                 break;
             }
             case 1: {
                 log.error("Server return Error (can't make command)");
-                System.out.println("Server return Error (can't make command)");
                 break;
             }
             case 2: {
                 log.error("Server return Error (invalid request)");
-                System.out.println("Server return Error (invalid request)");
                 break;
             }
             default: {
                 log.error("Get invalid status code from server");
-                System.out.println("Get invalid status code from server");
             }
         }
         if (!response.getList().isEmpty()) {
-            System.out.println(response.getList().toString());
+            log.info(response.getList().toString());
         }
     }
 }
