@@ -8,6 +8,17 @@
 Использована Java 10 версии.
 Система сборки - maven.
 
+#### Структура проекта:
+1. модуль tcp-client : Клиент
+2. модуль tcp-server : Сервер
+3. модуль tcp-common : Модуль с общими зависимостями
+4. обёртка tcp-client-server-build : Используется для агрегирования модулей в рамках maven
+
+#### Сборка проекта
+* В корне tcp-client-server-build
+```
+mvn clean install
+```
 #### Описание команд:
 1. получение описания по слову;
 2. поиск списка слов по маске;
@@ -16,11 +27,11 @@
 5. удаление слова.
 
 #### Примеры команд:
-- 1 hello
-- 2 in%c_
-- 3 Happiness The state of supreme satisfaction with life
-- 4 hello new description
-- 5 unhappiness
+* 1 hello
+* 2 in*c?
+* 3 Happiness The state of supreme satisfaction with life
+* 4 hello new description
+* 5 unhappiness
 
 #### Техническое задание:
 Необходимо написать серверное приложение, которое будет уметь цепляться к примитивной БД (одна таблица из двух полей “слово” и “описание") и слушать определенный TCP порт. На этот порт будут поступать команды, которые должны позволять:
