@@ -1,5 +1,6 @@
 package ru.protei.server.dao;
 
+import org.apache.log4j.Logger;
 import ru.protei.server.database.DBPool;
 import ru.protei.server.model.Word;
 
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordDAO {
+    private static final Logger log = Logger.getLogger(WordDAO.class);
+
     private static final String SQL_TABLE_COLUMN_ID = "ID";
     private static final String SQL_TABLE_COLUMN_TITLE = "TITLE";
     private static final String SQL_TABLE_COLUMN_DESCRIPTION = "DESCRIPTION";
@@ -34,9 +37,9 @@ public class WordDAO {
         try {
             Statement stmt = dbPool.getConnection().createStatement();
             stmt.executeUpdate(SQL_CREATE_TABLE_WORD);
-            System.out.println("Table WORD created.");
+            log.info("Table WORD created");
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.fatal("Can't create table WORD", e);
         }
     }
 
@@ -63,7 +66,7 @@ public class WordDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error find", e);
         }
         return null;
     }
@@ -82,7 +85,7 @@ public class WordDAO {
                 list.add(word);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error findAll", e);
         }
         return list;
     }
@@ -92,15 +95,9 @@ public class WordDAO {
             pstmt.setString(1, w.getTitle());
             pstmt.setString(2, w.getDescription());
 
-            if (pstmt.executeUpdate() > 0) {
-                System.out.println("New word was inserted successfully!");
-                return true;
-            } else {
-                System.out.println("Error while inserting new word.");
-                return false;
-            }
+            return pstmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error insert", e);
         }
         return false;
     }
@@ -112,7 +109,7 @@ public class WordDAO {
 
             return pstmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error update", e);
         }
         return false;
     }
@@ -123,7 +120,7 @@ public class WordDAO {
 
             return pstmt.executeUpdate() != 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error delete", e);
         }
         return false;
     }
@@ -136,7 +133,7 @@ public class WordDAO {
                 return true;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Error exists", e);
         }
         return false;
     }
