@@ -14,25 +14,10 @@ import java.util.List;
 public class WordService {
     private static final Logger log = Logger.getLogger(WordService.class);
 
-    private static WordService instance;
     private WordDAO wordDAO;
 
-    private WordService() {
-        wordDAO = WordDAO.getInstance();
-    }
-
-    /**
-     * Returns {@code WordService} instance.
-     *
-     * @return {@code WordService} instance
-     */
-    public static WordService getInstance() {
-
-        if (instance == null) {
-            instance = new WordService();
-        }
-
-        return instance;
+    public WordService() {
+        wordDAO = new WordDAO();
     }
 
     /**

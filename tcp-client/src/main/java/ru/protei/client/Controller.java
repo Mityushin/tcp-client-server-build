@@ -21,17 +21,7 @@ public class Controller {
             "<code> <word> <description>";
     private static String BAD_COMMAND = "Invalid input. Use " + HELP_QUERY + " to help";
 
-
-    private static Controller instanse;
-
-    private Controller() {
-    }
-
-    public static Controller getInstanse() {
-        if (instanse == null) {
-            instanse = new Controller();
-        }
-        return instanse;
+    public Controller() {
     }
 
     /**

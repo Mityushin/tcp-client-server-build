@@ -20,18 +20,10 @@ public class Controller {
     private static final Logger log = Logger.getLogger(Controller.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    private static Controller instance;
     private WordService wordService;
 
-    private Controller() {
-        wordService = WordService.getInstance();
-    }
-
-    public static Controller getInstance() {
-        if (instance == null) {
-            instance = new Controller();
-        }
-        return instance;
+    public Controller() {
+        wordService = new WordService();
     }
 
     public String resolveCommand(String str) {
