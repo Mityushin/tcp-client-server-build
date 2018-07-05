@@ -34,61 +34,87 @@ public class Controller {
         Word word = new Word();
         List<Word> list = new ArrayList<Word>();
 
+        log.info("Trying to resolve command...");
         switch (request.getCode()) {
             case 1: {
-                log.info("Resolve Find command");
+                log.info("Get Find command");
 
                 word.setTitle(request.getWord());
 
+                log.info("Trying to find word...");
                 word = wordService.find(word);
                 if (word != null) {
+                    log.info("Word find completed successfully");
                     list.add(word);
                     response.setStatus(0);
+                } else {
+                    log.info("Failed to find word");
                 }
                 break;
             }
             case 2: {
-                log.info("Resolve FindByRegExp command");
+                log.info("Get FindByRegExp command");
 
+                log.info("Trying to find by regexp words...");
                 list = wordService.findAll(request.getRegexp());
+                if (!list.isEmpty()) {
+                    log.info("Words find by regexp completed successfully");
+                } else {
+                    log.info("Nothing found");
+                }
                 response.setStatus(0);
                 break;
             }
             case 3: {
-                log.info("Resolve Insert command");
+                log.info("Get Insert command");
 
                 word.setTitle(request.getWord());
                 word.setDescription(request.getDescription());
 
+                log.info("Trying to create word...");
                 if (wordService.create(word)) {
+                    log.info("Word successfully created");
                     response.setStatus(0);
+                } else {
+                    log.info("Word not created");
+                    response.setStatus(1);
                 }
                 break;
             }
             case 4: {
-                log.info("Resolve Update command");
+                log.info("Get Update command");
 
                 word.setTitle(request.getWord());
                 word.setDescription(request.getDescription());
 
+                log.info("Trying to update word...");
                 if (wordService.update(word)) {
+                    log.info("Word successfully updated");
                     response.setStatus(0);
+                } else {
+                    log.info("Word not updated");
+                    response.setStatus(1);
                 }
                 break;
             }
             case 5: {
-                log.info("Resolve Delete command");
+                log.info("Get Delete command");
 
                 word.setTitle(request.getWord());
 
+                log.info("Trying to delete word...");
                 if (wordService.delete(word)) {
+                    log.info("Word successfully deleted");
                     response.setStatus(0);
+                } else {
+                    log.info("Word not deleted");
+                    response.setStatus(1);
                 }
                 break;
             }
             default: {
                 response.setStatus(2);
-                log.error("Resolve invalid command " + request.getCode());
+                log.error("Get invalid command " + request.getCode());
             }
         }
         response.setList(list);
