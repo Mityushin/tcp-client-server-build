@@ -20,7 +20,7 @@ public class Server {
     private Controller controller;
 
     public Server() {
-        controller = Controller.getInstance();
+        controller = new Controller();
     }
 
     public static void main(String[] args) {

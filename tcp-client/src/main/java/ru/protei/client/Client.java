@@ -27,7 +27,7 @@ public class Client {
     private Controller controller;
 
     public Client() {
-        this.controller = Controller.getInstanse();
+        this.controller = new Controller();
     }
 
     public static void main(String[] args) {
