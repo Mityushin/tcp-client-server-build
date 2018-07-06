@@ -17,9 +17,15 @@ public class Controller {
     private static Logger log = Logger.getLogger(Controller.class);
     private static String HELP_QUERY = "help()";
     private static String QUIT_QUERY = "quit()";
-    private static String HELP_BODY = "Input command like below\n" +
-            "<code> <word> <description>";
-    private static String BAD_COMMAND = "Invalid input. Use " + HELP_QUERY + " to help";
+    private static String HELP_BODY = "Input command number\n" +
+            "1 - find word by title\n" +
+            "2 - find word by regexp\n" +
+            "3 - create word\n" +
+            "4 - change word\n" +
+            "5 - remove word\n" +
+            "quit() - quit from program\n" +
+            "help() - print this message\n";
+    private static String BAD_COMMAND = "Invalid input. Use " + HELP_QUERY + " to get help";
 
     public Controller() {
     }
@@ -32,64 +38,72 @@ public class Controller {
     public ClientRequest getClientRequest() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        String str;
-        String[] words = null;
-
-        ClientRequest request;
-
-        log.info(HELP_BODY);
-
         while (true) {
+            log.info(HELP_BODY);
+
+            ClientRequest request = new ClientRequest();
+
             try {
+                String str = reader.readLine();
 
-                str = reader.readLine();
-                words = str.split("\\s", 3);
-
-                while (words[0].equalsIgnoreCase(HELP_QUERY)) {
+                while (str.equalsIgnoreCase(HELP_QUERY)) {
                     log.info(HELP_BODY);
-
                     str = reader.readLine();
-                    words = str.split("\\s", 3);
                 }
-            } catch (IOException e) {
-                log.fatal("Can't read from input", e);
-                System.exit(2);
-            }
 
-            if (words[0].equalsIgnoreCase(QUIT_QUERY)) {
-                log.info("Quit program");
-                System.exit(0);
-            }
+                if (str.equalsIgnoreCase(QUIT_QUERY)) {
+                    log.info("Waiting for quit program...");
+                    request.setCode(9);
+                    return request;
+                }
 
-            request = new ClientRequest();
-            try {
-                request.setCode(Integer.parseInt(words[0]));
+                request.setCode(Integer.parseInt(str));
+
+                String[] words;
                 switch (request.getCode()) {
                     case 1: {
-                        request.setWord(words[1]);
-                        return request;
+                        log.info("Get Find command. Please input <word_title>");
+                        request.setWord(reader.readLine());
+                        break;
                     }
                     case 2: {
-                        request.setRegexp(words[1]);
-                        return request;
+                        log.info("Get Find by regexp command. Please input <regexp>");
+                        request.setRegexp(reader.readLine());
+                        break;
                     }
-                    case 3:
+                    case 3: {
+                        log.info("Get Create word command. Please input <word_title> <word_description>");
+                        words = reader.readLine().split("\\s", 2);
+
+                        request.setWord(words[0]);
+                        request.setDescription(words[1]);
+
+                        break;
+                    }
                     case 4: {
-                        request.setWord(words[1]);
-                        request.setDescription(words[2]);
-                        return request;
+                        log.info("Get Change word command. Please input <word_title> <new_word_description>");
+                        words = reader.readLine().split("\\s", 2);
+
+                        request.setWord(words[0]);
+                        request.setDescription(words[1]);
+
+                        break;
                     }
                     case 5: {
-                        request.setWord(words[1]);
-                        return request;
+                        log.info("Get Remove word command. Please input <word_title>");
+                        request.setWord(reader.readLine());
+                        break;
                     }
                 }
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
                 log.error(BAD_COMMAND);
-
-            } catch (NumberFormatException e) {
-                log.error(BAD_COMMAND);
+                continue;
+            } catch (IOException e) {
+                log.fatal("Failed to read from input", e);
+                request.setCode(-1);
             }
+
+            return request;
         }
     }
 
