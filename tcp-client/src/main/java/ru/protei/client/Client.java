@@ -50,6 +50,12 @@ public class Client {
             while (!server.isClosed()) {
                 log.info("Trying to make request...");
                 ClientRequest request = controller.getClientRequest();
+
+                if (request.getCode() == -1
+                        || request.getCode() == 9) {
+                    break;
+                }
+
                 log.info("Request created successfully");
 
                 String str = GSON.toJson(request);
@@ -67,9 +73,17 @@ public class Client {
 
                 controller.resolveServerResponse(response);
             }
+
+            in.close();
+            out.close();
+
+            server.close();
+
         } catch (IOException e) {
             log.fatal("Failed to connect to server", e);
             System.exit(2);
         }
+
+        log.info("Quit program");
     }
 }

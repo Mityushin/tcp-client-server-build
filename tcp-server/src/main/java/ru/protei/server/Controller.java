@@ -46,10 +46,10 @@ public class Controller {
                 if (word != null) {
                     log.info("Word find completed successfully");
                     list.add(word);
-                    response.setStatus(0);
                 } else {
                     log.info("Failed to find word");
                 }
+                response.setStatus(0);
                 break;
             }
             case 2: {
