@@ -14,10 +14,25 @@ import java.util.List;
 public class WordService {
     private static final Logger log = Logger.getLogger(WordService.class);
 
+    private static WordService instance;
     private WordDAO wordDAO;
 
-    public WordService() {
-        wordDAO = new WordDAO();
+    private WordService() {
+        wordDAO = WordDAO.getInstance();
+    }
+
+    /**
+     * Returns {@code WordService} instance.
+     *
+     * @return {@code WordService} instance
+     */
+    public static WordService getInstance() {
+
+        if (instance == null) {
+            instance = new WordService();
+        }
+
+        return instance;
     }
 
     /**
@@ -52,20 +67,47 @@ public class WordService {
     }
 
     public boolean create(Word w) {
-        return wordDAO.create(w);
+
+        boolean result = wordDAO.create(w);
+
+        if (result) {
+            log.info("Insert WORD value");
+        } else {
+            log.info("Can't insert WORD value");
+        }
+
+        return result;
     }
 
     public boolean update(Word w) {
-        return wordDAO.update(w);
+
+        boolean result = wordDAO.update(w);
+
+        if (result) {
+            log.info("Update WORD value");
+        } else {
+            log.info("Can't update WORD value");
+        }
+
+        return result;
     }
 
     public boolean delete(Word w) {
 
         if (!wordDAO.exists(w)) {
+            log.info("Can't delete WORD value. It doesn't exist");
             return false;
         }
 
-        return wordDAO.delete(w);
+        boolean result = wordDAO.delete(w);
+
+        if (result) {
+            log.info("Delete WORD value");
+        } else {
+            log.info("Can't delete WORD value");
+        }
+
+        return result;
     }
 
     public boolean exists(Word w) {

@@ -43,11 +43,9 @@ public class DBConnectionManager {
     public Connection getConnection() {
         if (connection == null) {
             try {
-                log.info("Trying to connect to database...");
                 connection = DriverManager.getConnection(JDBC_DB_URL, JDBC_USER, JDBC_PASSWORD);
-                log.info("Connection to database established successfully");
             } catch (SQLException e) {
-                log.fatal("Failed to connect to database", e);
+                log.fatal("Can't connect to database", e);
             }
         }
         return connection;

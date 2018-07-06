@@ -20,7 +20,7 @@ public class Server {
     private Controller controller;
 
     public Server() {
-        controller = new Controller();
+        controller = Controller.getInstance();
     }
 
     public static void main(String[] args) {
@@ -32,18 +32,15 @@ public class Server {
         int serverPort = 3345;
         ServerSocket server = null;
         try {
-            log.info("Trying to start server on port " + serverPort + "...");
             server = new ServerSocket(serverPort);
-            log.info("Server started successfully");
-
         } catch (IOException e) {
-            log.fatal("Failed to create socket!", e);
+            log.fatal("Can't create socket", e);
             System.exit(2);
         }
+        log.info("Start server");
 
-        while (!server.isClosed()) {
+        while (true) {
             try {
-                log.info("Waiting for client...");
                 Socket client = server.accept();
                 log.info("Get client");
 
@@ -53,32 +50,21 @@ public class Server {
                 String str;
 
                 while (!client.isClosed()) {
-                    log.info("Waiting for client request...");
-
                     str = in.readUTF();
-                    log.info("Get client request");
 
                     str = controller.resolveCommand(str);
 
-                    log.info("Sending response to client...");
                     out.writeUTF(str);
                     out.flush();
-                    log.info("Successfully send");
                 }
 
                 in.close();
                 out.close();
             } catch (IOException e) {
-                log.error("Lose client!");
+                log.error("Lose client");
             }
         }
 
-        try {
-            log.info("Trying to stop server...");
-            server.close();
-            log.info("Server was stop successfully");
-        } catch (IOException e) {
-            log.error("Failed to stop server!", e);
-        }
+        //log.info("Stop server");
     }
 }

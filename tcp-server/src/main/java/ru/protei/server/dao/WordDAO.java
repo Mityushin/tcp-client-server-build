@@ -34,9 +34,10 @@ public class WordDAO {
     private static final String SQL_CHECK_EXISTS_BY_TITLE = "SELECT * FROM WORD WHERE WORD.TITLE = ?";
 
 
+    private static WordDAO instance;
     private DBConnectionManager dbConnectionManager;
 
-    public WordDAO() {
+    private WordDAO() {
         dbConnectionManager = DBConnectionManager.getInstance();
         try {
             Statement stmt = dbConnectionManager.getConnection().createStatement();
@@ -45,6 +46,18 @@ public class WordDAO {
         } catch (SQLException e) {
             log.fatal("Can't create table WORD", e);
         }
+    }
+
+    /**
+     * Return {@code WordDAO} instance.
+     *
+     * @return {@code WordDAO} instance
+     */
+    public static WordDAO getInstance() {
+        if (instance == null) {
+            instance = new WordDAO();
+        }
+        return instance;
     }
 
     /**

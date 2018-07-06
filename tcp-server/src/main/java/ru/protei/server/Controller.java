@@ -20,10 +20,18 @@ public class Controller {
     private static final Logger log = Logger.getLogger(Controller.class);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    private static Controller instance;
     private WordService wordService;
 
-    public Controller() {
-        wordService = new WordService();
+    private Controller() {
+        wordService = WordService.getInstance();
+    }
+
+    public static Controller getInstance() {
+        if (instance == null) {
+            instance = new Controller();
+        }
+        return instance;
     }
 
     public String resolveCommand(String str) {
@@ -34,87 +42,61 @@ public class Controller {
         Word word = new Word();
         List<Word> list = new ArrayList<Word>();
 
-        log.info("Trying to resolve command...");
         switch (request.getCode()) {
             case 1: {
-                log.info("Get Find command");
+                log.info("Resolve Find command");
 
                 word.setTitle(request.getWord());
 
-                log.info("Trying to find word...");
                 word = wordService.find(word);
                 if (word != null) {
-                    log.info("Word find completed successfully");
                     list.add(word);
-                } else {
-                    log.info("Failed to find word");
+                    response.setStatus(0);
                 }
-                response.setStatus(0);
                 break;
             }
             case 2: {
-                log.info("Get FindByRegExp command");
+                log.info("Resolve FindByRegExp command");
 
-                log.info("Trying to find by regexp words...");
                 list = wordService.findAll(request.getRegexp());
-                if (!list.isEmpty()) {
-                    log.info("Words find by regexp completed successfully");
-                } else {
-                    log.info("Nothing found");
-                }
                 response.setStatus(0);
                 break;
             }
             case 3: {
-                log.info("Get Insert command");
+                log.info("Resolve Insert command");
 
                 word.setTitle(request.getWord());
                 word.setDescription(request.getDescription());
 
-                log.info("Trying to create word...");
                 if (wordService.create(word)) {
-                    log.info("Word successfully created");
                     response.setStatus(0);
-                } else {
-                    log.info("Word not created");
-                    response.setStatus(1);
                 }
                 break;
             }
             case 4: {
-                log.info("Get Update command");
+                log.info("Resolve Update command");
 
                 word.setTitle(request.getWord());
                 word.setDescription(request.getDescription());
 
-                log.info("Trying to update word...");
                 if (wordService.update(word)) {
-                    log.info("Word successfully updated");
                     response.setStatus(0);
-                } else {
-                    log.info("Word not updated");
-                    response.setStatus(1);
                 }
                 break;
             }
             case 5: {
-                log.info("Get Delete command");
+                log.info("Resolve Delete command");
 
                 word.setTitle(request.getWord());
 
-                log.info("Trying to delete word...");
                 if (wordService.delete(word)) {
-                    log.info("Word successfully deleted");
                     response.setStatus(0);
-                } else {
-                    log.info("Word not deleted");
-                    response.setStatus(1);
                 }
                 break;
             }
             default: {
                 response.setStatus(2);
-                log.error("Get invalid command " + request.getCode());
+                log.error("Resolve invalid command " + request.getCode());
             }
         }
         response.setList(list);
