@@ -27,7 +27,7 @@ public class Client {
     private Controller controller;
 
     public Client() {
-        this.controller = Controller.getInstanse();
+        this.controller = new Controller();
     }
 
     public static void main(String[] args) {
@@ -39,30 +39,51 @@ public class Client {
         try {
             log.info("Start client");
 
+            log.info("Trying to connect to server...");
             InetAddress ipAddress = InetAddress.getByName(SERVER_IP_ADDRESS);
             Socket server = new Socket(ipAddress, SERVER_PORT);
-            log.info("Connected to server");
+            log.info("Connection to server established successfully");
 
             DataInputStream in = new DataInputStream(server.getInputStream());
             DataOutputStream out = new DataOutputStream(server.getOutputStream());
 
             while (!server.isClosed()) {
+                log.info("Trying to make request...");
                 ClientRequest request = controller.getClientRequest();
+
+                if (request.getCode() == -1
+                        || request.getCode() == 9) {
+                    break;
+                }
+
+                log.info("Request created successfully");
 
                 String str = GSON.toJson(request);
 
+                log.info("Sending request to server...");
                 out.writeUTF(str);
                 out.flush();
+                log.info("Successfully send");
 
+                log.info("Waiting for server response...");
                 str = in.readUTF();
+                log.info("Get server response");
 
                 ServerResponse response = GSON.fromJson(str, ServerResponse.class);
 
                 controller.resolveServerResponse(response);
             }
+
+            in.close();
+            out.close();
+
+            server.close();
+
         } catch (IOException e) {
-            log.fatal("Can't connect to server", e);
+            log.fatal("Failed to connect to server", e);
             System.exit(2);
         }
+
+        log.info("Quit program");
     }
 }
